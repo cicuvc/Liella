@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+    <EnableNETAnalyzers>false</EnableNETAnalyzers>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <GenerateNeutralResourcesLanguageAttribute>false</GenerateNeutralResourcesLanguageAttribute>
+    <EnsureRuntimePackageDependencies>false</EnsureRuntimePackageDependencies>
+    <ExcludeMscorlibFacade>true</ExcludeMscorlibFacade>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <RuntimeMetadataVersion>v4.0.30319</RuntimeMetadataVersion>
+    <AnalysisLevel>None</AnalysisLevel>
+	  <BaseIntermediateOutputPath>../obj/Payload</BaseIntermediateOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Platform)'=='AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <OutDir>..\bin</OutDir>
+    <NoWarn>1701;1702;CS0649;CS0169</NoWarn>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="App.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FrameworkLib\FrameworkLib.csproj" />
+  </ItemGroup>
+
+</Project>

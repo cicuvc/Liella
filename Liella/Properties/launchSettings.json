@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "Liella": {
+      "commandName": "Project",
+      "remoteDebugEnabled": false,
+      "nativeDebugging": true
+    },
+    "配置文件 1": {
+      "commandName": "Executable",
+      "remoteDebugEnabled": false
+    }
+  }
+}
