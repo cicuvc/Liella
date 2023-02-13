@@ -31,9 +31,12 @@
     <Compile Include="System\IDisposable.cs" />
     <Compile Include="System\Reflection\ReflectionBase.cs" />
     <Compile Include="System\Runtime\CompilerServices\ExtensionAttribute.cs" />
+    <Compile Include="System\Runtime\CompilerServices\IsByRefLikeAttribute.cs" />
     <Compile Include="System\Runtime\CompilerServices\IsVolatile.cs" />
     <Compile Include="System\Runtime\CompilerServices\MethodImpl.cs" />
     <Compile Include="System\Runtime\CompilerServices\MethodTableIndexAttribute.cs" />
+    <Compile Include="System\Runtime\CompilerServices\NativeIntegerAttribute.cs" />
+    <Compile Include="System\Runtime\CompilerServices\NullableAttribute.cs" />
     <Compile Include="System\Runtime\CompilerServices\RuntimeExport.cs" />
     <Compile Include="System\Runtime\CompilerServices\RuntimeHelpers.cs" />
     <Compile Include="System\Runtime\CompilerServices\Unsafe.cs" />

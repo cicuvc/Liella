@@ -14,7 +14,9 @@ namespace Liella.Project {
     public class PrimaryModule {
 
     }
+    public class DummyVisL : CSharpSyntaxVisitor {
 
+    }
     public class PrimaryVisitor : CSharpSyntaxVisitor<PrimaryModule> {
         public SemanticModel m_Model;
         public override PrimaryModule DefaultVisit(SyntaxNode node) {
@@ -32,6 +34,8 @@ namespace Liella.Project {
                 this.Visit(i);
             }
             
+
+
             return null;
         }
         public override PrimaryModule VisitPredefinedType(PredefinedTypeSyntax node) {
@@ -78,8 +82,13 @@ namespace Liella.Project {
             var files = new List<FileInfo>();
             EnumFiles(new DirectoryInfo(path),files);
             var syntaxTree = new List<SyntaxTree>();
-            foreach(var e in files) {
-                syntaxTree.Add(CSharpSyntaxTree.ParseText(File.ReadAllText(e.FullName), CSharpParseOptions.Default, e.FullName));
+            var v0 = new DummyVisL();
+            foreach (var e in files) {
+                var srcFile = SourceText.From(File.ReadAllText(e.FullName), Encoding.UTF8);
+                var tree = CSharpSyntaxTree.ParseText(srcFile, CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.CSharp9), e.FullName);
+                syntaxTree.Add(tree);
+
+                tree.GetCompilationUnitRoot().Accept(v0);
             }
 
             var compOpt = new CSharpCompilationOptions(OutputKind.NetModule, true, "framework");
@@ -88,20 +97,30 @@ namespace Liella.Project {
                 .WithOptimizationLevel(Microsoft.CodeAnalysis.OptimizationLevel.Debug)
                 .WithPlatform(Microsoft.CodeAnalysis.Platform.X64)
                 .WithConcurrentBuild(true)
-                .WithOverflowChecks(false);
-
+                .WithNullableContextOptions(NullableContextOptions.Enable)
+                .WithOverflowChecks(false)
+                
+                ;
             
+
+
             var emitOptions = new EmitOptions(debugInformationFormat: DebugInformationFormat.PortablePdb);
             emitOptions = emitOptions.WithSubsystemVersion(SubsystemVersion.None);
-
+            emitOptions = emitOptions.WithRuntimeMetadataVersion("6.0")
+                .WithDefaultSourceFileEncoding(Encoding.UTF8)
+                
+                .WithDebugInformationFormat(DebugInformationFormat.PortablePdb);
+            
             var compilation = CSharpCompilation.Create("framework", syntaxTree, null, compOpt);
 
-            var syt = syntaxTree[3];
-            var smm = compilation.GetSemanticModel(syt);
-            var vis = new PrimaryVisitor();
-            vis.m_Model = smm;
-            var vroot = syt.GetCompilationUnitRoot();
-            vroot.Accept(vis);
+            var result = compilation.Emit("./framework.dll", "./framework.pdb");
+
+            if (!result.Success) {
+                foreach(var i in result.Diagnostics) {
+                    Console.WriteLine(i);
+                }
+            }
+            //vroot.Accept(vis);
 
         }
     }
