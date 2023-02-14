@@ -15,7 +15,7 @@
     <Authors>cicuvc</Authors>
     <Company>None</Company>
     <RootNamespace></RootNamespace>
-	  <BaseIntermediateOutputPath>../obj/FrameworkLib</BaseIntermediateOutputPath>
+
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Platform)'=='AnyCPU'">

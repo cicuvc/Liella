@@ -50,24 +50,24 @@ namespace Liella.Compiler.LLVM {
 
         public void ProcessDependence() {
             if (m_BuildState >= LLVMTypeBuildPass.SolveDependencies) return;
-            ProcessDependenceImpl();
+            ProcessDependenceCore();
             m_BuildState = LLVMTypeBuildPass.SolveDependencies;
         }
         public LLVMCompType SetupLLVMTypes() {
             if (m_BuildState >= LLVMTypeBuildPass.SetupTypes) return m_InstanceType;
             m_BuildState = LLVMTypeBuildPass.SetupTypes;
-            var llvmType = SetupLLVMTypesImpl();
+            var llvmType = SetupLLVMTypesCore();
 
             return llvmType;
         }
         public void GenerateVTable() {
             if (m_BuildState >= LLVMTypeBuildPass.GenerateVTable) return;
-            GenerateVTableImpl();
+            GenerateVTableCore();
             m_BuildState = LLVMTypeBuildPass.GenerateVTable;
         }
 
 
-        protected virtual void ProcessDependenceImpl() {
+        protected virtual void ProcessDependenceCore() {
             //if (m_MetadataType.Entry.ToString().Contains("ClassB")) Debugger.Break();
             m_BaseType = m_MetadataType.BaseType != null ? (LLVMClassTypeInfo)m_Compiler.ResolveLLVMType(m_MetadataType.BaseType.Entry) : null;
             foreach (var i in m_MetadataType.Interfaces) {
@@ -86,7 +86,7 @@ namespace Liella.Compiler.LLVM {
 
         }
 
-        protected virtual LLVMCompType SetupLLVMTypesImpl() {
+        protected virtual LLVMCompType SetupLLVMTypesCore() {
             if (m_MetadataType.Entry.ToString().Contains("App")) Debugger.Break();
             var staticFieldList = m_MetadataType.StaticFields.Values.ToList();
             staticFieldList.Sort((u, v) => {
@@ -98,7 +98,7 @@ namespace Liella.Compiler.LLVM {
 
             return default;
         }
-        protected abstract void GenerateVTableImpl();
+        protected abstract void GenerateVTableCore();
         public abstract int LocateMethodInMainTable(LLVMMethodInfoWrapper method);
         public override string ToString() {
             return m_MetadataType.Entry.ToString();

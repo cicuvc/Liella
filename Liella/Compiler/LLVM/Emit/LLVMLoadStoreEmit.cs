@@ -61,9 +61,9 @@ namespace Liella.Compiler.LLVM.Emit {
             var context = m_Context;
             var evalStack = m_EvalStack;
 
-            var length = evalStack.Pop().TryCast(LLVMCompType.Int64, m_Builder);
+            var length = evalStack.Pop().TryCast(LLVMCompType.Integer64, m_Builder);
             var ptr = m_Builder.BuildArrayAlloca(LLVMTypeRef.Int8, length.Value);
-            evalStack.Push(LLVMCompValue.CreateValue(ptr, LLVMCompType.Int8.ToPointerType()));
+            evalStack.Push(LLVMCompValue.CreateValue(ptr, LLVMCompType.Integer8.ToPointerType()));
         }
         [ILCodeHandler(ILOpCode.Ldarga_s, ILOpCode.Ldarga)]
         public void LoadArugmentAddress(ILOpCode opcode, ulong operand) {

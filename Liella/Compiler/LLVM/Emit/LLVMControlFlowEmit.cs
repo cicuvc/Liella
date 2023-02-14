@@ -180,7 +180,7 @@ namespace Liella.Compiler.LLVM.Emit {
 
             var branches = (uint)operand;
             var falseTarget = context.GetLLVMBasicBlock(basicBlock.FalseExit);
-            var value = evalStack.Pop().TryCast(LLVMCompType.UInt32, m_Builder);
+            var value = evalStack.Pop().TryCast(LLVMCompType.UInteger32, m_Builder);
             var switchInst = m_Builder.BuildSwitch(value.Value, falseTarget, branches);
             for (var i = 0u; i < branches; i++) {
                 var trueTarget = context.GetLLVMBasicBlock(basicBlock.TrueExit[i]);
@@ -200,7 +200,7 @@ namespace Liella.Compiler.LLVM.Emit {
             } else {
                 m_Builder.BuildRetVoid();
             }
-            if (evalStack.Count != 0) throw new Exception("Stack analysis fault");
+            if (evalStack.Count != 0) throw new InvalidProgramException("Stack analysis fault");
         }
     }
 }

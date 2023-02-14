@@ -1,0 +1,6 @@
+<Project>
+ <PropertyGroup>
+	 <BaseIntermediateOutputPath>../obj/EFILoader</BaseIntermediateOutputPath>
+   <Deterministic>true</Deterministic>
+ </PropertyGroup>
+</Project>

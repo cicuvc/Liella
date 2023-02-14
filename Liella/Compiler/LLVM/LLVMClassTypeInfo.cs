@@ -8,8 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Liella.Compiler.LLVM {
-    public class LLVMClassTypeInfo : LLVMTypeInfo {
-        protected static Dictionary<string, Func<LLVMCompiler, LLVMCompType>> s_PrimitiveTypesMap = new Dictionary<string, Func<LLVMCompiler, LLVMCompType>>() {
+    public sealed class LLVMClassTypeInfo : LLVMTypeInfo {
+        private static Dictionary<string, Func<LLVMCompiler, LLVMCompType>> s_PrimitiveTypesMap = new Dictionary<string, Func<LLVMCompiler, LLVMCompType>>() {
             {"System::Boolean",e=>LLVMCompType.CreateType(LLVMTypeTag.Struct,LLVMTypeRef.Int1) },
             {"System::Byte",e=>LLVMCompType.CreateType(LLVMTypeTag.Struct|LLVMTypeTag.UnsignedInt,LLVMTypeRef.Int8) },
             {"System::SByte",e=>LLVMCompType.CreateType(LLVMTypeTag.Struct|LLVMTypeTag.SignedInt,LLVMTypeRef.Int8) },
@@ -19,23 +19,23 @@ namespace Liella.Compiler.LLVM {
             {"System::UInt32",e=>LLVMCompType.CreateType(LLVMTypeTag.Struct|LLVMTypeTag.UnsignedInt,LLVMTypeRef.Int32) },
             {"System::Int64",e=>LLVMCompType.CreateType(LLVMTypeTag.Struct|LLVMTypeTag.SignedInt,LLVMTypeRef.Int64) },
             {"System::UInt64",e=>LLVMCompType.CreateType(LLVMTypeTag.Struct|LLVMTypeTag.UnsignedInt,LLVMTypeRef.Int64) },
-            {"System::Double",e=>LLVMCompType.CreateType(LLVMTypeTag.Struct|LLVMTypeTag.Real | LLVMTypeTag.FP64,LLVMTypeRef.Double) },
-            {"System::Single",e=>LLVMCompType.CreateType(LLVMTypeTag.Struct|LLVMTypeTag.Real,LLVMTypeRef.Float) },
+            {"System::Double",e=>LLVMCompType.CreateType(LLVMTypeTag.Struct|LLVMTypeTag.NumberReal | LLVMTypeTag.FP64,LLVMTypeRef.Double) },
+            {"System::Single",e=>LLVMCompType.CreateType(LLVMTypeTag.Struct|LLVMTypeTag.NumberReal,LLVMTypeRef.Float) },
             {"System::Void",e=>LLVMCompType.CreateType(LLVMTypeTag.Struct,LLVMTypeRef.Void) },
-            {"System::IntPtr",e=>LLVMCompType.CreateType(LLVMTypeTag.Struct|LLVMTypeTag.SignedInt|LLVMTypeTag.Pointer,LLVMTypeRef.CreatePointer(LLVMTypeRef.Int8,0)) },
+            {"System::IntPtr",e=>LLVMCompType.CreateType(LLVMTypeTag.Struct|LLVMTypeTag.SignedInt|LLVMTypeTag.TypePointer,LLVMTypeRef.CreatePointer(LLVMTypeRef.Int8,0)) },
             {"System.Runtime.CompilerServices::TypeMetadata",e=>LLVMCompType.CreateType(LLVMTypeTag.Struct, e.TypeMetadataType) }
         };
 
-        protected LLVMTypeRef m_DataStorageType = LLVMTypeRef.Void;
-        protected LLVMCompType m_ReferenceType;
-        protected LLVMCompType m_HeapPtrType;
+        private LLVMTypeRef m_DataStorageType = LLVMTypeRef.Void;
+        private LLVMCompType m_ReferenceType;
+        private LLVMCompType m_HeapPtrType;
 
-        protected ulong m_DataStorageSize;
+        private ulong m_DataStorageSize;
 
-        protected LLVMValueRef[] m_VirtualTables = null;
-        protected LLVMValueRef[] m_MainTableValues = null;
+        private LLVMValueRef[] m_VirtualTables;
+        private LLVMValueRef[] m_MainTableValues;
 
-        protected MethodInstance[] m_MainTableMethods = null;
+        private MethodInstance[] m_MainTableMethods;
 
         public LLVMValueRef[] VirtualTables => m_VirtualTables;
         public LLVMValueRef[] MainTableValues => m_MainTableValues;
@@ -81,8 +81,8 @@ namespace Liella.Compiler.LLVM {
                 m_MetadataType.IsValueType ? m_DataStorageType : m_HeapPtrType.LLVMType);
 
         }
-        protected override LLVMCompType SetupLLVMTypesImpl() {
-            base.SetupLLVMTypesImpl();
+        protected override LLVMCompType SetupLLVMTypesCore() {
+            base.SetupLLVMTypesCore();
 
             var layout = m_MetadataType.Layout;
 
@@ -94,17 +94,17 @@ namespace Liella.Compiler.LLVM {
             // explicit layout
             if (m_MetadataType.Attributes.HasFlag(TypeAttributes.ExplicitLayout)) {
                 throw new NotImplementedException();
-                var structSize = 0ul;
-                foreach (var i in m_MetadataType.Fields) {
-                    //var llvmType = i.Value.Type is PointerTypeEntry ? 8: m_Compiler.ResolveLLVMInstanceType(i.Value.Type);
-                    //structSize = Math.Max(structSize, (uint)i.Value.Definition.GetOffset() + llvmType.DataStorageSize);
-                }
-                structSize = Math.Max(structSize, (ulong)layout.Size);
+                //var structSize = 0ul;
+                //foreach (var i in m_MetadataType.Fields) {
+                //    //var llvmType = i.Value.Type is PointerTypeEntry ? 8: m_Compiler.ResolveLLVMInstanceType(i.Value.Type);
+                //    //structSize = Math.Max(structSize, (uint)i.Value.Definition.GetOffset() + llvmType.DataStorageSize);
+                //}
+                //structSize = Math.Max(structSize, (ulong)layout.Size);
 
-                m_DataStorageSize = structSize;
-                m_DataStorageType.StructSetBody(new LLVMTypeRef[] { LLVMTypeRef.CreateArray(LLVMTypeRef.Int8, (uint)structSize) }, false);
+                //m_DataStorageSize = structSize;
+                //m_DataStorageType.StructSetBody(new LLVMTypeRef[] { LLVMTypeRef.CreateArray(LLVMTypeRef.Int8, (uint)structSize) }, false);
 
-                return m_InstanceType;
+                //return m_InstanceType;
             }
             // sequential and auto
             // TODO: Auto layout optimization
@@ -132,7 +132,7 @@ namespace Liella.Compiler.LLVM {
         }
 
 
-        protected void FillInterface(LLVMInterfaceTypeInfo interfaceType, LLVMValueRef[] interfaceValues, ref int unknownTerms) {
+        private void FillInterface(LLVMInterfaceTypeInfo interfaceType, LLVMValueRef[] interfaceValues, ref int unknownTerms) {
             foreach (var i in m_MetadataType.Methods) {
                 var llvmMethod = m_Compiler.ResolveLLVMMethod(i.Key);
                 var index = interfaceType.LocateMethodInMainTable(llvmMethod);
@@ -144,7 +144,7 @@ namespace Liella.Compiler.LLVM {
 
             if (unknownTerms != 0 && m_BaseType != null) m_BaseType.FillInterface(interfaceType, interfaceValues, ref unknownTerms);
         }
-        protected LLVMValueRef GenerateMainVTable() {
+        private LLVMValueRef GenerateMainVTable() {
             //if (m_MetadataType.Entry.ToString().Contains("ClassB")) Debugger.Break();
             var metadataType = m_MetadataType;
             var mainVTTypes = new List<LLVMTypeRef>();
@@ -210,7 +210,7 @@ namespace Liella.Compiler.LLVM {
 
             return mainVTable;
         }
-        protected override void GenerateVTableImpl() {
+        protected override void GenerateVTableCore() {
 
 
             var vtableTypes = new LLVMTypeRef[m_Interfaces.Count + 2];
@@ -268,7 +268,7 @@ namespace Liella.Compiler.LLVM {
                 }
 
 
-                if (unkTerms != 0) throw new Exception($"Incomplete vtable for interface {i}");
+                if (unkTerms != 0) throw new InvalidProgramException($"Incomplete vtable for interface {i}");
                 var types = i.VtableType.StructElementTypes;
                 for (var k = 0; k < interfaceValue.Length; k++) {
                     interfaceValue[k] = LLVMValueRef.CreateConstBitCast(interfaceValue[k], types[k]);

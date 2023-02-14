@@ -7,15 +7,17 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Liella.Compiler {
+    [AttributeUsage(AttributeTargets.Method)]
     public sealed class ILCodeHandlerAttribute: Attribute {
-        public readonly ILOpCode[] ILOpcodes;
+        private readonly ILOpCode[] m_ILOpCodes;
+        public ILOpCode[] ILOpcodes => m_ILOpCodes;
         public ILCodeHandlerAttribute(params ILOpCode[] code) {
-            ILOpcodes = code;
+            m_ILOpCodes = code;
         }
     }
     public abstract class ILCodeHandler {
         protected delegate void EmitHandler(ILOpCode opcode,ulong operand);
-        protected Dictionary<ILOpCode, EmitHandler> m_DispatchMap = new Dictionary<ILOpCode, EmitHandler>();
+        private Dictionary<ILOpCode, EmitHandler> m_DispatchMap = new Dictionary<ILOpCode, EmitHandler>();
         public ILCodeHandler() {
             var type = GetType();
             var methods = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public) ;

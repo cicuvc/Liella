@@ -20,8 +20,8 @@ namespace Liella.Compiler.LLVM {
 
         }
 
-        protected override void ProcessDependenceImpl() {
-            base.ProcessDependenceImpl();
+        protected override void ProcessDependenceCore() {
+            base.ProcessDependenceCore();
             var index = 0u;
             foreach (var i in m_MetadataType.Methods) {
                 m_InterfaceTerms.Add(new LLVMInterfaceTerm(m_Compiler, i.Value, index++));
@@ -33,7 +33,7 @@ namespace Liella.Compiler.LLVM {
             }
         }
 
-        protected override void GenerateVTableImpl() {
+        protected override void GenerateVTableCore() {
             var interfaceTerms = m_InterfaceTerms.ToList();
             var vtableTypes = new List<LLVMTypeRef>();
             interfaceTerms.Sort((a, b) => a.InterfaceIndex.CompareTo(b.InterfaceIndex));
@@ -43,13 +43,13 @@ namespace Liella.Compiler.LLVM {
             m_VtableType.StructSetBody(vtableTypes.ToArray(), false);
         }
 
-        protected override LLVMCompType SetupLLVMTypesImpl() {
-            base.SetupLLVMTypesImpl();
+        protected override LLVMCompType SetupLLVMTypesCore() {
+            base.SetupLLVMTypesCore();
 
             m_InterfaceType = m_Compiler.Context.CreateNamedStruct($"ref.{m_MetadataType.FullName}");
-            m_InterfaceType.StructSetBody(new LLVMTypeRef[] { }, false);
+            m_InterfaceType.StructSetBody(Array.Empty<LLVMTypeRef>(), false);
 
-            m_InstanceType = LLVMCompType.CreateType(LLVMTypeTag.Pointer | LLVMTypeTag.Interface, LLVMTypeRef.CreatePointer(m_InterfaceType, 0));
+            m_InstanceType = LLVMCompType.CreateType(LLVMTypeTag.TypePointer | LLVMTypeTag.Interface, LLVMTypeRef.CreatePointer(m_InterfaceType, 0));
             return m_InstanceType;
         }
         public override int LocateMethodInMainTable(LLVMMethodInfoWrapper method) {

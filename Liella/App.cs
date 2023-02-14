@@ -117,21 +117,21 @@ namespace Liella {
             compiler.GenerateBinary("./payload.obj");
 
             nuint len = 0;
-            var linker = lto_codegen_create();
-            lto_codegen_set_cpu(linker, (sbyte*)Marshal.StringToHGlobalAnsi("znver3"));
+            var linker = LTOCodeGenCreate();
+            LTOCodeGenSetCPU(linker, (sbyte*)Marshal.StringToHGlobalAnsi("znver3"));
             
-            var lnkModule = lto_module_create((sbyte*)Marshal.StringToHGlobalAnsi("./payload.bc"));
+            var lnkModule = LTOModuleCreate((sbyte*)Marshal.StringToHGlobalAnsi("./payload.bc"));
             
             
-            lto_codegen_set_debug_model(linker, lto_debug_model.LTO_DEBUG_MODEL_DWARF);
-            lto_codegen_set_pic_model(linker, lto_codegen_model.LTO_CODEGEN_PIC_MODEL_DYNAMIC);
-            lto_module_set_target_triple(lnkModule, (sbyte*)Marshal.StringToHGlobalAnsi("x86_64-pc-none-eabi"));
-            lto_codegen_add_module(linker, lnkModule);
-            lto_codegen_add_must_preserve_symbol(linker, (sbyte*)Marshal.StringToHGlobalAnsi("EFILoader::App.EfiMain"));
-            lto_codegen_add_must_preserve_symbol(linker, (sbyte*)Marshal.StringToHGlobalAnsi("__chkstk"));
+            LTOCodeGenSetDebugModel(linker, lto_debug_model.LTO_DEBUG_MODEL_DWARF);
+            LTOCodeGenSetPICModel(linker, lto_codegen_model.LTO_CODEGEN_PIC_MODEL_DYNAMIC);
+            LTOModuleSetTargetTriple(lnkModule, (sbyte*)Marshal.StringToHGlobalAnsi("x86_64-pc-none-eabi"));
+            LTOCodeGenAddModule(linker, lnkModule);
+            LTOCodeGenAddExportSymbol(linker, (sbyte*)Marshal.StringToHGlobalAnsi("EFILoader::App.EfiMain"));
+            LTOCodeGenAddExportSymbol(linker, (sbyte*)Marshal.StringToHGlobalAnsi("__chkstk"));
             //lto_codegen_add_must_preserve_symbol(linker, (sbyte*)Marshal.StringToHGlobalAnsi("WriteFile"));
             //lto_codegen_optimize(linker);
-            var compileResult = lto_codegen_compile(linker, &len);
+            var compileResult = LTOCodeGenCompile(linker, &len);
 
             
             
@@ -151,34 +151,31 @@ namespace Liella {
             Console.WriteLine("Complete");
             Console.ReadLine();
         }
-        [DllImport("LTO", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public unsafe static extern void lto_codegen_set_debug_model(LLVMOpaqueLTOCodeGenerator* cg, lto_debug_model model);
-        [DllImport("LTO", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public unsafe static extern void lto_codegen_set_pic_model(LLVMOpaqueLTOCodeGenerator* cg, lto_codegen_model model);
-        [DllImport("LTO", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public unsafe static extern void lto_module_set_target_triple(LLVMOpaqueLTOModule* cg, sbyte* symbol);
-        [DllImport("LTO", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public unsafe static extern void lto_codegen_set_cpu(LLVMOpaqueLTOCodeGenerator* cg, sbyte* symbol);
-        [DllImport("LTO", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public unsafe static extern void lto_codegen_add_must_preserve_symbol(LLVMOpaqueLTOCodeGenerator* cg, sbyte* symbol);
-        [DllImport("LTO", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public unsafe static extern sbyte* lto_module_get_symbol_name(LLVMOpaqueLTOModule* mod, uint index);
-        [DllImport("LTO", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public unsafe static extern byte lto_codegen_optimize(LLVMOpaqueLTOCodeGenerator* cg);
-        [DllImport("LTO", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public unsafe static extern byte lto_codegen_write_merged_modules(LLVMOpaqueLTOCodeGenerator* cg, sbyte* path);
-        [DllImport("LTO", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public unsafe static extern byte lto_codegen_compile_to_file(LLVMOpaqueLTOCodeGenerator* cg, sbyte** name);
+        [DllImport("LTO", EntryPoint = "lto_codegen_set_debug_model", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        private unsafe static extern void LTOCodeGenSetDebugModel(LLVMOpaqueLTOCodeGenerator* cg, lto_debug_model model);
+        [DllImport("LTO", EntryPoint = "lto_codegen_set_pic_model", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        private unsafe static extern void LTOCodeGenSetPICModel(LLVMOpaqueLTOCodeGenerator* cg, lto_codegen_model model);
+        [DllImport("LTO", EntryPoint = "lto_module_set_target_triple", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        private unsafe static extern void LTOModuleSetTargetTriple(LLVMOpaqueLTOModule* cg, sbyte* symbol);
+        [DllImport("LTO", EntryPoint = "lto_codegen_set_cpu", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        private unsafe static extern void LTOCodeGenSetCPU(LLVMOpaqueLTOCodeGenerator* cg, sbyte* symbol);
+        [DllImport("LTO", EntryPoint = "lto_codegen_add_must_preserve_symbol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        private unsafe static extern void LTOCodeGenAddExportSymbol(LLVMOpaqueLTOCodeGenerator* cg, sbyte* symbol);
+        [DllImport("LTO", EntryPoint = "lto_module_get_symbol_name", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        private unsafe static extern sbyte* LTOModuleGetSymbolName(LLVMOpaqueLTOModule* mod, uint index);
+        [DllImport("LTO",EntryPoint = "lto_codegen_optimize", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        private unsafe static extern byte LTOCodeGenOptimize(LLVMOpaqueLTOCodeGenerator* cg);
+        
 
-        [DllImport("LTO", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public unsafe static extern void* lto_codegen_compile(LLVMOpaqueLTOCodeGenerator* cg, nuint* length);
+        [DllImport("LTO", EntryPoint = "lto_codegen_compile", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        private unsafe static extern void* LTOCodeGenCompile(LLVMOpaqueLTOCodeGenerator* cg, nuint* length);
 
-        [DllImport("LTO", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public unsafe static extern LLVMOpaqueLTOCodeGenerator* lto_codegen_create();
-        [DllImport("LTO", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public unsafe static extern LLVMOpaqueLTOModule* lto_module_create(sbyte* path);
-        [DllImport("LTO", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public unsafe static extern byte lto_codegen_add_module(LLVMOpaqueLTOCodeGenerator* cg, LLVMOpaqueLTOModule* mod);
+        [DllImport("LTO", EntryPoint = "lto_codegen_create", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        private unsafe static extern LLVMOpaqueLTOCodeGenerator* LTOCodeGenCreate();
+        [DllImport("LTO", EntryPoint = "lto_module_create", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        private unsafe static extern LLVMOpaqueLTOModule* LTOModuleCreate(sbyte* path);
+        [DllImport("LTO",EntryPoint = "lto_codegen_add_module", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        private unsafe static extern byte LTOCodeGenAddModule(LLVMOpaqueLTOCodeGenerator* cg, LLVMOpaqueLTOModule* mod);
 
     }
 

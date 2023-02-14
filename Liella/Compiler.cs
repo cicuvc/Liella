@@ -39,12 +39,12 @@ namespace Liella.Compiler {
             var mainBlock = method.Function.AppendBasicBlock("Block0");
             builder.PositionAtEnd(mainBlock);
             var val = builder.BuildLoad(method.Function.GetParam(0));
-            LLVMHelpers.AddMetadataForInst(val, "invariant.load", new LLVMValueRef[] { });
+            LLVMHelpers.AddMetadataForInst(val, "invariant.load", Array.Empty<LLVMValueRef>());
             builder.BuildRet(val);
         }
 
         public override bool MatchFunction(LLVMMethodInfoWrapper method) {
-            return method.Method.Entry.ToString().StartsWith("System.Runtime.CompilerServices::Unsafe.DereferenceInvariant<");
+            return method.Method.Entry.ToString().StartsWith("System.Runtime.CompilerServices::Unsafe.DereferenceInvariant<", StringComparison.Ordinal);
         }
     }
     public class LLVMUnsafeDerefInvariantIndex : LLVMIntrinsicFunctionDef {
@@ -54,12 +54,12 @@ namespace Liella.Compiler {
             var parma0 = method.Function.GetParam(0);
             var ptrAddr = builder.BuildGEP(parma0, new LLVMValueRef[] { method.Function.GetParam(1) });
             var val = builder.BuildLoad(ptrAddr);
-            LLVMHelpers.AddMetadataForInst(val, "invariant.load",new LLVMValueRef[] { });
+            LLVMHelpers.AddMetadataForInst(val, "invariant.load",Array.Empty<LLVMValueRef>());
             builder.BuildRet(val);
         }
 
         public override bool MatchFunction(LLVMMethodInfoWrapper method) {
-            return method.Method.Entry.ToString().StartsWith("System.Runtime.CompilerServices::Unsafe.DereferenceInvariantIndex<");
+            return method.Method.Entry.ToString().StartsWith("System.Runtime.CompilerServices::Unsafe.DereferenceInvariantIndex<",StringComparison.Ordinal);
         }
     }
     public class LLVMUnsafeAsPtr : LLVMIntrinsicFunctionDef {
@@ -72,7 +72,7 @@ namespace Liella.Compiler {
         }
 
         public override bool MatchFunction(LLVMMethodInfoWrapper method) {
-            return method.Method.Entry.ToString().StartsWith("System.Runtime.CompilerServices::Unsafe.AsPtr<");
+            return method.Method.Entry.ToString().StartsWith("System.Runtime.CompilerServices::Unsafe.AsPtr<", StringComparison.Ordinal);
         }
     }
     public class LLVMPInvoke : LLVMIntrinsicFunctionDef {
@@ -98,7 +98,7 @@ namespace Liella.Compiler {
             return method.Method.CustomAttributes.ContainsKey(method.Context.TypeEnvironment.IntrinicsTypes["System.Runtime.CompilerServices::RuntimeExport"]);
         }
     }
-    public class LLVMDelegate : LLVMIntrinsicFunctionDef {
+    public class LLVMDelegateDef : LLVMIntrinsicFunctionDef {
         public override void FillFunctionBody(LLVMMethodInfoWrapper method, LLVMBuilderRef builder) {
             var delegateType = (LLVMClassTypeInfo)method.Context.ResolveLLVMType(method.Context.TypeEnvironment.IntrinicsTypes["System::Delegate"]);
             switch (method.Method.Entry.Name) {
@@ -172,9 +172,8 @@ namespace Liella.Compiler {
                     var dstPtr = method.Function.GetParam(1);
                     var srcValue = builder.BuildBitCast(method.Function.GetParam(0),dstPtr.TypeOf);
                     
-                    var copyFunc = LLVMHelpers.GetIntrinsicFunction(method.Context.Module, "llvm.va_copy", new LLVMTypeRef[] {
-                    });
-                    var i8p = LLVMCompType.Int8.ToPointerType().LLVMType;
+                    var copyFunc = LLVMHelpers.GetIntrinsicFunction(method.Context.Module, "llvm.va_copy", Array.Empty<LLVMTypeRef>());
+                    var i8p = LLVMCompType.Integer8.ToPointerType().LLVMType;
                     builder.BuildCall2(copyFunc.TypeOf.ElementType, copyFunc, new LLVMValueRef[] { 
                         builder.BuildBitCast(dstPtr,i8p),
                         builder.BuildBitCast(srcValue,i8p)
@@ -201,9 +200,8 @@ namespace Liella.Compiler {
                     LLVMHelpers.AddAttributeForFunction(method.Context.Module, method.Function, "alwaysinline");
 
                     var ptrList = method.Function.GetParam(0);
-                    var endVaFunc = LLVMHelpers.GetIntrinsicFunction(method.Context.Module, "llvm.va_end", new LLVMTypeRef[] { 
-                    });
-                    var i8p = LLVMCompType.Int8.ToPointerType().LLVMType;
+                    var endVaFunc = LLVMHelpers.GetIntrinsicFunction(method.Context.Module, "llvm.va_end", Array.Empty<LLVMTypeRef>());
+                    var i8p = LLVMCompType.Integer8.ToPointerType().LLVMType;
                     builder.BuildCall(endVaFunc, new LLVMValueRef[] { 
                         builder.BuildBitCast(ptrList,i8p)
                     });
@@ -229,14 +227,14 @@ namespace Liella.Compiler {
 
             var staticCtorList = method.Context.StaticConstructorList;
             foreach(var i in staticCtorList) {
-                builder.BuildCall(i.Function, new LLVMValueRef[] { });
+                builder.BuildCall(i.Function, Array.Empty<LLVMValueRef>());
             }
             builder.BuildRetVoid();
 
         }
 
         public override bool MatchFunction(LLVMMethodInfoWrapper method) {
-            return method.Method.Entry.ToString().StartsWith("System.Runtime.CompilerServices::RuntimeHelpers.RunStaticConstructors");
+            return method.Method.Entry.ToString().StartsWith("System.Runtime.CompilerServices::RuntimeHelpers.RunStaticConstructors", StringComparison.Ordinal);
         }
     }
 

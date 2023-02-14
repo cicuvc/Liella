@@ -12,18 +12,19 @@ using System.Threading.Tasks;
 
 namespace Liella.Image {
 
-    public class ImageCompilationUnitSet : CompilationUnitSet {
-        protected ImageTypeEntryFactory m_TypeEntryFactory = new ImageTypeEntryFactory();
-        protected ImageSignatureDecoder m_SignatureDecoder;
-        protected Dictionary<MetadataReader, ImageAssembly> m_AssemblyList = new Dictionary<MetadataReader, ImageAssembly>();
-        protected Dictionary<string, TypeDefinition> m_LoadedTypeList = new Dictionary<string, TypeDefinition>();
-        protected Dictionary<TypeEntry, LiTypeInfo> m_ActiveTypeList = new Dictionary<TypeEntry, LiTypeInfo>();
-        protected Dictionary<MethodEntry, MethodInstance> m_ActiveMethod = new Dictionary<MethodEntry, MethodInstance>();
-        protected ImageAssembly m_MainAssembly;
-        protected Queue<TypeEntry> m_TypeScanQueue = new Queue<TypeEntry>();
-        protected Queue<ImageMethodEntry> m_MethodScanQueue = new Queue<ImageMethodEntry>();
+    public class ImageCompilationUnitSet : CompilationUnitSet,IDisposable {
+        private ImageTypeEntryFactory m_TypeEntryFactory = new ImageTypeEntryFactory();
+        private ImageSignatureDecoder m_SignatureDecoder;
+        private Dictionary<MetadataReader, ImageAssembly> m_AssemblyList = new Dictionary<MetadataReader, ImageAssembly>();
+        private Dictionary<string, TypeDefinition> m_LoadedTypeList = new Dictionary<string, TypeDefinition>();
+        private Dictionary<TypeEntry, LiTypeInfo> m_ActiveTypeList = new Dictionary<TypeEntry, LiTypeInfo>();
+        private Dictionary<MethodEntry, MethodInstance> m_ActiveMethod = new Dictionary<MethodEntry, MethodInstance>();
+        private ImageAssembly m_MainAssembly;
+        private Queue<TypeEntry> m_TypeScanQueue = new Queue<TypeEntry>();
+        private Queue<ImageMethodEntry> m_MethodScanQueue = new Queue<ImageMethodEntry>();
 
-        protected string[] m_IntrinicsTypeNames;
+        private string[] m_IntrinicsTypeNames;
+        private bool disposedValue;
 
         public ImageTypeEntryFactory TypeEntryFactory { get => m_TypeEntryFactory; }
         public override LiSignatureDecoder SignatureDecoder => m_SignatureDecoder;
@@ -406,6 +407,23 @@ namespace Liella.Image {
                 }
 
             });
+        }
+
+        protected virtual void Dispose(bool disposing) {
+            if (!disposedValue) {
+                if (disposing) {
+                    foreach (var i in m_AssemblyList) i.Value.Dispose();
+
+                }
+
+                disposedValue = true;
+            }
+        }
+
+
+        public void Dispose() {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 

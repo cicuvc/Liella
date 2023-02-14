@@ -17,7 +17,7 @@ namespace Liella.Compiler.LLVM.Emit {
             var evalStack = m_EvalStack;
 
             var llvmFunction = IRHelper.GetMethodInfo((uint)operand, context, m_Builder, out var llvmType, out _);
-            var ptrType = LLVMCompType.Int8.ToPointerType();
+            var ptrType = LLVMCompType.Integer8.ToPointerType();
             var ptrValue = m_Builder.BuildBitCast(llvmFunction.Function, ptrType.LLVMType);
             evalStack.Push(LLVMCompValue.CreateValue(ptrValue, ptrType));
         }
@@ -39,7 +39,7 @@ namespace Liella.Compiler.LLVM.Emit {
             }
             var retType = context.Context.ResolveLLVMInstanceType(callSite.ReturnType);
             var funcType = LLVMTypeRef.CreatePointer(LLVMTypeRef.CreateFunction(retType.LLVMType, argType), 0);
-            functionPtr = functionPtr.TryCast(LLVMCompType.CreateType(LLVMTypeTag.Pointer, funcType), m_Builder);
+            functionPtr = functionPtr.TryCast(LLVMCompType.CreateType(LLVMTypeTag.TypePointer, funcType), m_Builder);
 
             var result = m_Builder.BuildCall2(funcType.ElementType, functionPtr.Value, argValue);
             if (retType.LLVMType != LLVMTypeRef.Void) evalStack.Push(LLVMCompValue.CreateValue(result, retType));

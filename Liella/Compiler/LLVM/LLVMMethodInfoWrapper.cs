@@ -11,20 +11,20 @@ using System.Threading.Tasks;
 
 namespace Liella.Compiler.LLVM {
     public class LLVMMethodInfoWrapper {
-        protected static Queue<MethodBasicBlock> s_Queue = new Queue<MethodBasicBlock>();
-        protected static Stack<LLVMCompValue> s_EvalStack = new Stack<LLVMCompValue>();
+        private static Queue<MethodBasicBlock> s_Queue = new Queue<MethodBasicBlock>();
+        private static Stack<LLVMCompValue> s_EvalStack = new Stack<LLVMCompValue>();
 
-        protected MethodInstance m_Method;
-        protected LLVMTypeInfo m_DeclType;
-        protected LLVMCompiler m_Compiler;
-        protected LLVMTypeRef m_FunctionType;
-        protected LLVMValueRef m_Function;
-        protected LLVMTypeRef m_FunctionPtrType;
-        protected LLVMCompValue[] m_LocalVarValues = null;
-        protected SortedList<Interval, LLVMBasicBlockRef> m_LLVMBasicBlocks;
-        protected LLVMCompValue[] m_ParamValues = null;
-        protected LLVMCompType m_FunctionRetType;
-        protected LLVMCompType[] m_ParamType = null;
+        private MethodInstance m_Method;
+        private LLVMTypeInfo m_DeclType;
+        private LLVMCompiler m_Compiler;
+        private LLVMTypeRef m_FunctionType;
+        private LLVMValueRef m_Function;
+        private LLVMTypeRef m_FunctionPtrType;
+        private LLVMCompValue[] m_LocalVarValues;
+        private SortedList<Interval, LLVMBasicBlockRef> m_LLVMBasicBlocks;
+        private LLVMCompValue[] m_ParamValues;
+        private LLVMCompType m_FunctionRetType;
+        private LLVMCompType[] m_ParamType;
 
         public bool IsAbstract => m_Method.Attributes.HasFlag(MethodAttributes.Abstract);
         public LLVMCompValue[] ParamValueRef => m_ParamValues;
@@ -55,7 +55,7 @@ namespace Liella.Compiler.LLVM {
             if (!isStatic) {
                 var declType = m_Method.DeclType;
                 var llvmType = m_Compiler.ResolveLLVMType(declType.Entry);
-                m_ParamType[idx++] = llvmType is LLVMClassTypeInfo classType ? classType.HeapPtrType : (llvmType.InstanceType.WithTag(LLVMTypeTag.StackAlloc));
+                m_ParamType[idx++] = llvmType is LLVMClassTypeInfo classType ? classType.HeapPtrType : (llvmType.InstanceType);
             }
             foreach (var i in signature.ParameterTypes) m_ParamType[idx++] = m_Compiler.ResolveLLVMInstanceType(i);
 
@@ -109,7 +109,6 @@ namespace Liella.Compiler.LLVM {
             idx = 0;
             foreach (var i in m_Method.LocalVaribleTypes) {
                 var llvmType = m_Compiler.ResolveLLVMInstanceType(i);
-                if (i is PointerTypeEntry || m_Compiler.TypeEnvironment.ActiveTypes[i].IsValueType) llvmType.TypeTag |= LLVMTypeTag.StackAlloc;
 
                 m_LocalVarValues[idx++] = LLVMCompValue.CreateValue(builder.BuildAlloca(llvmType.LLVMType), llvmType.TypeTag);
             }
@@ -145,7 +144,7 @@ namespace Liella.Compiler.LLVM {
             }
         }
         public void GenerateCode(IRGenerator irGenerator) {
-            var intrinsicFuncDef = m_Compiler.TryFindFunctionImpl(this);
+            var intrinsicFuncDef = m_Compiler.TryFindFunctionCore(this);
             if (intrinsicFuncDef != null) {
                 intrinsicFuncDef.FillFunctionBody(this, irGenerator.Builder);
 

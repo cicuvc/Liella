@@ -39,7 +39,7 @@ namespace Liella.Compiler.LLVM {
             new LLVMUnsafeDerefInvariantIndex(),
             new LLVMPInvoke(),
             new LLVMUnsafeAsPtr(),
-            new LLVMDelegate(),
+            new LLVMDelegateDef(),
             new LLVMRuntimeExport(),
             new LLVMVaList(),
             new LLVMRuntimeHelpersIntrinsic(),
@@ -110,8 +110,8 @@ namespace Liella.Compiler.LLVM {
         }
         public LLVMCompType ResolveLLVMInstanceType(TypeEntry entry) {
             if (entry is PointerTypeEntry ptrEntry) {
-                if (ptrEntry.ElementEntry.ToString() == "System::Void") return LLVMCompType.Int8.ToPointerType();
-                return LLVMCompType.CreateType(LLVMTypeTag.Pointer, LLVMTypeRef.CreatePointer(ResolveLLVMInstanceType(((PointerTypeEntry)entry).ElementEntry).LLVMType, 0));
+                if (ptrEntry.ElementEntry.ToString() == "System::Void") return LLVMCompType.Integer8.ToPointerType();
+                return LLVMCompType.CreateType(LLVMTypeTag.TypePointer, LLVMTypeRef.CreatePointer(ResolveLLVMInstanceType(((PointerTypeEntry)entry).ElementEntry).LLVMType, 0));
             }
             return m_LLVMTypeList[entry].InstanceType;
         }
@@ -124,7 +124,7 @@ namespace Liella.Compiler.LLVM {
         public LLVMTypeInfo ResolveLLVMType(EntityHandle token, MethodInstance context) {
             return m_LLVMTypeList[context.ResolveTypeToken(token)];
         }
-        public LLVMIntrinsicFunctionDef TryFindFunctionImpl(LLVMMethodInfoWrapper method) {
+        public LLVMIntrinsicFunctionDef TryFindFunctionCore(LLVMMethodInfoWrapper method) {
             foreach (var i in m_IntrinsicFunction) {
                 if (i.MatchFunction(method)) return i;
             }
@@ -204,7 +204,7 @@ namespace Liella.Compiler.LLVM {
 
         }
         [DllImport("libLLVM")]
-        public unsafe static extern void LLVMPassManagerBuilderSetOptLevel(LLVMOpaquePassManagerBuilder* op, uint level);
+        private unsafe static extern void LLVMPassManagerBuilderSetOptLevel(LLVMOpaquePassManagerBuilder* op, uint level);
         public unsafe void PostProcess() {
 
             var cpm = m_Module.CreateFunctionPassManager();

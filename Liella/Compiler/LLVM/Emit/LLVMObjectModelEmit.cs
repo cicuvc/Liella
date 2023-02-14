@@ -92,14 +92,14 @@ namespace Liella.Compiler.LLVM.Emit {
             var unkToken = MetadataHelper.CreateHandle((uint)operand);
             var targetTypeEntry = context.Method.ResolveTypeToken(unkToken);
             var targetType = (LLVMClassTypeInfo)context.Context.ResolveLLVMType(targetTypeEntry);
-            evalStack.Push(LLVMCompValue.CreateValue(targetType.DataStorageType.SizeOf, LLVMCompType.Int64));
+            evalStack.Push(LLVMCompValue.CreateValue(targetType.DataStorageType.SizeOf, LLVMCompType.Integer64));
         }
         [ILCodeHandler(ILOpCode.Ldnull)]
         public void LoadNullObject(ILOpCode opcode, ulong operand) {
             var context = m_Context;
             var evalStack = m_EvalStack;
 
-            evalStack.Push(LLVMCompValue.CreateValue(LLVMValueRef.CreateConstNull(LLVMTypeRef.CreatePointer(LLVMTypeRef.Int8, 0)), LLVMTypeTag.Pointer));
+            evalStack.Push(LLVMCompValue.CreateValue(LLVMValueRef.CreateConstNull(LLVMTypeRef.CreatePointer(LLVMTypeRef.Int8, 0)), LLVMTypeTag.TypePointer));
         }
         [ILCodeHandler(ILOpCode.Constrained)]
         public void CallVirtualTypeConstrain(ILOpCode opcode, ulong operand) {

@@ -13,10 +13,10 @@ namespace Liella.Compiler.LLVM.Emit {
             var evalStack = m_EvalStack;
 
             var pointerValue = evalStack.Pop();
-            var castPtr = pointerValue.TryCast(LLVMCompType.Int8.ToPointerType().ToPointerType(), m_Builder);
+            var castPtr = pointerValue.TryCast(LLVMCompType.Integer8.ToPointerType().ToPointerType(), m_Builder);
             var value = m_Builder.BuildLoad(castPtr.Value);
 
-            evalStack.Push(LLVMCompValue.CreateValue(value, LLVMCompType.Int8.ToPointerType()));
+            evalStack.Push(LLVMCompValue.CreateValue(value, LLVMCompType.Integer8.ToPointerType()));
         }
         [ILCodeHandler(ILOpCode.Stind_i)]
         public void StoreMemoryNativeInt8(ILOpCode opcode, ulong operand) {
@@ -25,7 +25,7 @@ namespace Liella.Compiler.LLVM.Emit {
 
             var value = evalStack.Pop();
             var pointerValue = evalStack.Pop();
-            var castPtr = pointerValue.TryCast(LLVMCompType.Int8.ToPointerType().ToPointerType(), m_Builder);
+            var castPtr = pointerValue.TryCast(LLVMCompType.Integer8.ToPointerType().ToPointerType(), m_Builder);
             m_Builder.BuildStore(value.Value, castPtr.Value);
         }
         [ILCodeHandler(ILOpCode.Ldind_u1,ILOpCode.Ldind_i1)]
@@ -34,7 +34,7 @@ namespace Liella.Compiler.LLVM.Emit {
             var evalStack = m_EvalStack;
 
             var pointerValue = evalStack.Pop();
-            var type = (opcode == ILOpCode.Ldind_u1) ? LLVMCompType.UInt8 : LLVMCompType.Int8;
+            var type = (opcode == ILOpCode.Ldind_u1) ? LLVMCompType.UInteger8 : LLVMCompType.Integer8;
             var castPtr = pointerValue.TryCast(type.ToPointerType(), m_Builder);
             var value = m_Builder.BuildLoad(castPtr.Value);
 
@@ -46,7 +46,7 @@ namespace Liella.Compiler.LLVM.Emit {
             var evalStack = m_EvalStack;
 
             var pointerValue = evalStack.Pop();
-            var type = (opcode == ILOpCode.Ldind_u2) ? LLVMCompType.UInt16 : LLVMCompType.Int16;
+            var type = (opcode == ILOpCode.Ldind_u2) ? LLVMCompType.UInteger16 : LLVMCompType.Integer16;
             var castPtr = pointerValue.TryCast(type.ToPointerType(), m_Builder);
             var value = m_Builder.BuildLoad(castPtr.Value);
             evalStack.Push(LLVMCompValue.CreateValue(value, type));
@@ -57,7 +57,7 @@ namespace Liella.Compiler.LLVM.Emit {
             var evalStack = m_EvalStack;
 
             var pointerValue = evalStack.Pop();
-            var type = (opcode == ILOpCode.Ldind_u4) ? LLVMCompType.UInt32 : LLVMCompType.Int32;
+            var type = (opcode == ILOpCode.Ldind_u4) ? LLVMCompType.UInteger32 : LLVMCompType.Integer32;
             var castPtr = pointerValue.TryCast(type.ToPointerType(), m_Builder);
             var value = m_Builder.BuildLoad(castPtr.Value);
             evalStack.Push(LLVMCompValue.CreateValue(value, type));
@@ -68,18 +68,18 @@ namespace Liella.Compiler.LLVM.Emit {
             var evalStack = m_EvalStack;
 
             var pointerValue = evalStack.Pop();
-            var castPtr = pointerValue.TryCast(LLVMCompType.Int64.ToPointerType(), m_Builder);
+            var castPtr = pointerValue.TryCast(LLVMCompType.Integer64.ToPointerType(), m_Builder);
             var value = m_Builder.BuildLoad(castPtr.Value);
-            evalStack.Push(LLVMCompValue.CreateValue(value, LLVMCompType.Int64));
+            evalStack.Push(LLVMCompValue.CreateValue(value, LLVMCompType.Integer64));
         }
         [ILCodeHandler(ILOpCode.Stind_i1)]
         public void StoreMemoryInt8(ILOpCode opcode, ulong operand) {
             var context = m_Context;
             var evalStack = m_EvalStack;
 
-            var value = evalStack.Pop().TryCast(LLVMCompType.Int8, m_Builder);
+            var value = evalStack.Pop().TryCast(LLVMCompType.Integer8, m_Builder);
             var pointerValue = evalStack.Pop();
-            var castPtr = pointerValue.TryCast(LLVMCompType.Int8.ToPointerType(), m_Builder);
+            var castPtr = pointerValue.TryCast(LLVMCompType.Integer8.ToPointerType(), m_Builder);
             m_Builder.BuildStore(value.Value, castPtr.Value);
         }
         [ILCodeHandler(ILOpCode.Stind_i2)]
@@ -87,9 +87,9 @@ namespace Liella.Compiler.LLVM.Emit {
             var context = m_Context;
             var evalStack = m_EvalStack;
 
-            var value = evalStack.Pop().TryCast(LLVMCompType.Int16, m_Builder);
+            var value = evalStack.Pop().TryCast(LLVMCompType.Integer16, m_Builder);
             var pointerValue = evalStack.Pop();
-            var castPtr = pointerValue.TryCast(LLVMCompType.Int16.ToPointerType(), m_Builder);
+            var castPtr = pointerValue.TryCast(LLVMCompType.Integer16.ToPointerType(), m_Builder);
             m_Builder.BuildStore(value.Value, castPtr.Value);
         }
         [ILCodeHandler(ILOpCode.Stind_i4)]
@@ -97,9 +97,9 @@ namespace Liella.Compiler.LLVM.Emit {
             var context = m_Context;
             var evalStack = m_EvalStack;
 
-            var value = evalStack.Pop().TryCast(LLVMCompType.Int32, m_Builder);
+            var value = evalStack.Pop().TryCast(LLVMCompType.Integer32, m_Builder);
             var pointerValue = evalStack.Pop();
-            var castPtr = pointerValue.TryCast(LLVMCompType.Int32.ToPointerType(), m_Builder);
+            var castPtr = pointerValue.TryCast(LLVMCompType.Integer32.ToPointerType(), m_Builder);
             m_Builder.BuildStore(value.Value, castPtr.Value);
         }
         [ILCodeHandler(ILOpCode.Stind_i8)]
@@ -107,9 +107,9 @@ namespace Liella.Compiler.LLVM.Emit {
             var context = m_Context;
             var evalStack = m_EvalStack;
 
-            var value = evalStack.Pop().TryCast(LLVMCompType.Int64, m_Builder);
+            var value = evalStack.Pop().TryCast(LLVMCompType.Integer64, m_Builder);
             var pointerValue = evalStack.Pop();
-            var castPtr = pointerValue.TryCast(LLVMCompType.Int64.ToPointerType(), m_Builder);
+            var castPtr = pointerValue.TryCast(LLVMCompType.Integer64.ToPointerType(), m_Builder);
             m_Builder.BuildStore(value.Value, castPtr.Value);
         }
     }

@@ -13,7 +13,7 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <RuntimeMetadataVersion>v4.0.30319</RuntimeMetadataVersion>
     <AnalysisLevel>None</AnalysisLevel>
-	  <BaseIntermediateOutputPath>../obj/Payload</BaseIntermediateOutputPath>
+	  
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Platform)'=='AnyCPU'">
@@ -25,6 +25,10 @@
 
   <ItemGroup>
     <Compile Include="App.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Directory.Build.props" />
   </ItemGroup>
 
   <ItemGroup>

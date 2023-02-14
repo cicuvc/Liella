@@ -9,13 +9,12 @@ using System.Threading.Tasks;
 
 namespace Liella.Image {
     public class FieldInfo : LiFieldInfo{
-        protected FieldAttributes m_Flags;
-        protected string m_Name;
-        protected TypeEntry m_Type;
-        protected TypeEntry m_DeclType;
-        protected FieldDefinition m_Definition;
-        protected uint m_LayoutOffset;
-        protected uint m_FieldIndex;
+        private FieldAttributes m_Flags;
+        private string m_Name;
+        private TypeEntry m_Type;
+        private TypeEntry m_DeclType;
+        private FieldDefinition m_Definition;
+        private uint m_FieldIndex;
         public override TypeEntry Type => m_Type;
         public override TypeEntry DeclType => m_DeclType;
         public override uint FieldIndex => m_FieldIndex;

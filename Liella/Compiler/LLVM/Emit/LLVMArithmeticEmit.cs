@@ -16,14 +16,14 @@ namespace Liella.Compiler.LLVM.Emit {
             var value2 = evalStack.Pop();
             var value1 = evalStack.Pop();
 
-            if (value1.Type.TypeTag.HasFlag(LLVMTypeTag.Pointer) || value2.Type.TypeTag.HasFlag(LLVMTypeTag.Pointer)) {
-                var ptrValue = value1.Type.TypeTag.HasFlag(LLVMTypeTag.Pointer) ? value1 : value2;
-                var intValue = value1.Type.TypeTag.HasFlag(LLVMTypeTag.Pointer) ? value2 : value1;
-                var resultInt = m_Builder.BuildAdd(intValue.TryCast(LLVMCompType.Int64, m_Builder).Value, m_Builder.BuildPtrToInt(ptrValue.Value, LLVMTypeRef.Int64));
+            if (value1.Type.TypeTag.HasFlag(LLVMTypeTag.TypePointer) || value2.Type.TypeTag.HasFlag(LLVMTypeTag.TypePointer)) {
+                var ptrValue = value1.Type.TypeTag.HasFlag(LLVMTypeTag.TypePointer) ? value1 : value2;
+                var intValue = value1.Type.TypeTag.HasFlag(LLVMTypeTag.TypePointer) ? value2 : value1;
+                var resultInt = m_Builder.BuildAdd(intValue.TryCast(LLVMCompType.Integer64, m_Builder).Value, m_Builder.BuildPtrToInt(ptrValue.Value, LLVMTypeRef.Int64));
                 evalStack.Push(LLVMCompValue.CreateValue(m_Builder.BuildIntToPtr(resultInt, ptrValue.Type.LLVMType), ptrValue.Type.TypeTag));
             } else {
                 value2 = value2.TryCast(value1.Type, m_Builder);
-                if (value1.Type.TypeTag.HasFlag(LLVMTypeTag.Real)) {
+                if (value1.Type.TypeTag.HasFlag(LLVMTypeTag.NumberReal)) {
                     evalStack.Push(LLVMCompValue.CreateValue(m_Builder.BuildFAdd(value1.Value, value2.Value), value1.Type));
                 } else {
                     evalStack.Push(LLVMCompValue.CreateValue(m_Builder.BuildAdd(value1.Value, value2.Value), value1.Type));
@@ -38,12 +38,12 @@ namespace Liella.Compiler.LLVM.Emit {
             var value2 = evalStack.Pop();
             var value1 = evalStack.Pop();
 
-            if (value1.Type.TypeTag.HasFlag(LLVMTypeTag.Pointer) && !value2.Type.TypeTag.HasFlag(LLVMTypeTag.Pointer)) {
-                var resultInt = m_Builder.BuildSub(m_Builder.BuildPtrToInt(value1.Value, LLVMTypeRef.Int64), value2.TryCast(LLVMCompType.Int64, m_Builder).Value);
+            if (value1.Type.TypeTag.HasFlag(LLVMTypeTag.TypePointer) && !value2.Type.TypeTag.HasFlag(LLVMTypeTag.TypePointer)) {
+                var resultInt = m_Builder.BuildSub(m_Builder.BuildPtrToInt(value1.Value, LLVMTypeRef.Int64), value2.TryCast(LLVMCompType.Integer64, m_Builder).Value);
                 evalStack.Push(LLVMCompValue.CreateValue(m_Builder.BuildIntToPtr(resultInt, value1.Type.LLVMType), value1.Type.TypeTag));
             } else {
                 value2 = value2.TryCast(value1.Type, m_Builder);
-                if (value1.Type.TypeTag.HasFlag(LLVMTypeTag.Real)) {
+                if (value1.Type.TypeTag.HasFlag(LLVMTypeTag.NumberReal)) {
                     evalStack.Push(LLVMCompValue.CreateValue(m_Builder.BuildFSub(value1.Value, value2.Value), value1.Type));
                 } else {
                     evalStack.Push(LLVMCompValue.CreateValue(m_Builder.BuildSub(value1.Value, value2.Value), value1.Type));
@@ -70,7 +70,7 @@ namespace Liella.Compiler.LLVM.Emit {
             var value2 = evalStack.Pop();
             var value1 = evalStack.Pop();
             value2 = value2.TryCast(value1.Type, m_Builder);
-            if (value1.Type.TypeTag.HasFlag(LLVMTypeTag.Real)) {
+            if (value1.Type.TypeTag.HasFlag(LLVMTypeTag.NumberReal)) {
                 evalStack.Push(LLVMCompValue.CreateValue(m_Builder.BuildFDiv(value1.Value, value2.Value), value1.Type));
             } else {
                 evalStack.Push(LLVMCompValue.CreateValue(m_Builder.BuildSDiv(value1.Value, value2.Value), value1.Type));
@@ -108,7 +108,7 @@ namespace Liella.Compiler.LLVM.Emit {
             var value1 = evalStack.Pop();
 
             value2 = value2.TryCast(value1.Type, m_Builder);
-            if (value1.Type.TypeTag.HasFlag(LLVMTypeTag.Real)) {
+            if (value1.Type.TypeTag.HasFlag(LLVMTypeTag.NumberReal)) {
                 evalStack.Push(LLVMCompValue.CreateValue(m_Builder.BuildFMul(value1.Value, value2.Value), value1.Type));
             } else {
                 evalStack.Push(LLVMCompValue.CreateValue(m_Builder.BuildMul(value1.Value, value2.Value), value1.Type));
@@ -191,7 +191,7 @@ namespace Liella.Compiler.LLVM.Emit {
             var evalStack = m_EvalStack;
 
             var value = evalStack.Pop();
-            if (value.Type.TypeTag.HasFlag(LLVMTypeTag.Real)) {
+            if (value.Type.TypeTag.HasFlag(LLVMTypeTag.NumberReal)) {
                 evalStack.Push(LLVMCompValue.CreateValue(m_Builder.BuildFNeg(value.Value), value.Type));
             } else {
                 evalStack.Push(LLVMCompValue.CreateValue(m_Builder.BuildNeg(value.Value), value.Type));

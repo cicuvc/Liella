@@ -8,10 +8,12 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Liella.Image {
-    public class ImageAssembly {
-        protected Stream m_AssemblyStream;
-        protected MetadataReader m_Reader;
-        protected PEReader m_PEReader;
+    public sealed class ImageAssembly:IDisposable {
+        private Stream m_AssemblyStream;
+        private MetadataReader m_Reader;
+        private PEReader m_PEReader;
+        private bool disposedValue;
+
         public PEReader PEReader { get => m_PEReader; }
         public MetadataReader Reader { get => m_Reader; }
         public unsafe ImageAssembly(Stream stream) {
@@ -19,6 +21,21 @@ namespace Liella.Image {
             m_PEReader = new PEReader(stream);
             var metadata = m_PEReader.GetMetadata();
             m_Reader = MetadataHelper.CreateMetadataReader(metadata.Pointer, metadata.Length);
+        }
+
+        private void Dispose(bool disposing) {
+            if (!disposedValue) {
+                if (disposing) {
+                    m_PEReader.Dispose();
+                }
+                disposedValue = true;
+            }
+        }
+
+
+        public void Dispose() {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -20,8 +20,8 @@ namespace Liella.Image {
         protected TypeLayout m_Layout;
 
         protected MetadataReader m_Reader;
-        protected ImageTypeInfo[] m_Interfaces = null;
-        protected ImageTypeInfo m_DeclType = null;
+        protected ImageTypeInfo[] m_Interfaces;
+        protected ImageTypeInfo m_DeclType;
 
         protected ImageTypeInfo m_BaseType;
         protected bool m_IsValueType;
@@ -58,7 +58,7 @@ namespace Liella.Image {
                 }
             }
         }
-        public override void RegisterMethodInstance(MethodInstance methodInstance) => m_Methods.Add(methodInstance.Entry, methodInstance);
+        public override void RegisterMethodInstance(MethodInstance mi) => m_Methods.Add(mi.Entry, mi);
 
         public ImageTypeInfo(ImageCompilationUnitSet env, ImageRealTypeEntry entry, ImageTypeInfo baseType, IGenericParameterContext genericContext, ImageTypeInfo declType)
             : this(env, entry, baseType, genericContext) {
@@ -131,7 +131,7 @@ namespace Liella.Image {
         public TypeEntry GetTypeGenericByIndex(CompilationUnitSet env, uint index) {
             if (Entry is ImageInstanceTypeEntry) {
                 var entry_ = (ImageInstanceTypeEntry)Entry;
-                if (entry_.GenericType.Length <= index) throw new Exception("");
+                if (entry_.GenericType.Length <= index) throw new ArgumentOutOfRangeException(nameof(index));
                 return entry_.GenericType[(int)(index)];
             } else {
                 return (env as ImageCompilationUnitSet).TypeEntryFactory.CreateTypeEntry(index);

@@ -149,7 +149,8 @@ namespace Liella
                 return s_ILOpCodeMap2[ilCodeValue & 0xFF];
             }
         }
-        public static Dictionary<ILOpCode, int> s_StackDeltaTable = new Dictionary<ILOpCode, int>() {
+        public static Dictionary<ILOpCode, int> StackDeltaTable => s_StackDeltaTable;
+        private static Dictionary<ILOpCode, int> s_StackDeltaTable = new Dictionary<ILOpCode, int>() {
             {ILOpCode.Nop, 0 },
             {ILOpCode.Ldarg, 1 },
             {ILOpCode.Ldarga, 1 },

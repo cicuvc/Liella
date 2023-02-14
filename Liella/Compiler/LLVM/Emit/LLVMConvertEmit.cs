@@ -15,7 +15,7 @@ namespace Liella.Compiler.LLVM.Emit {
 
             var value = evalStack.Pop();
 
-            evalStack.Push(value.TryCast(LLVMCompType.Float64, m_Builder));
+            evalStack.Push(value.TryCast(LLVMCompType.FloatPoint64, m_Builder));
 
         }
         [ILCodeHandler(ILOpCode.Conv_r4)]
@@ -25,7 +25,7 @@ namespace Liella.Compiler.LLVM.Emit {
 
             var value = evalStack.Pop();
 
-            evalStack.Push(value.TryCast(LLVMCompType.Float32, m_Builder));
+            evalStack.Push(value.TryCast(LLVMCompType.FloatPoint32, m_Builder));
 
         }
         [ILCodeHandler(ILOpCode.Conv_u)]
@@ -35,7 +35,7 @@ namespace Liella.Compiler.LLVM.Emit {
 
             var value = evalStack.Pop();
 
-            evalStack.Push(value.TryCast(LLVMCompType.Int64, m_Builder));
+            evalStack.Push(value.TryCast(LLVMCompType.Integer64, m_Builder));
 
         }
         [ILCodeHandler(ILOpCode.Conv_i)]
@@ -44,7 +44,7 @@ namespace Liella.Compiler.LLVM.Emit {
             var evalStack = m_EvalStack;
 
             var value = evalStack.Pop();
-            evalStack.Push(value.TryCast(LLVMCompType.Int64, m_Builder));
+            evalStack.Push(value.TryCast(LLVMCompType.Integer64, m_Builder));
 
         }
         [ILCodeHandler(ILOpCode.Conv_i8)]
@@ -53,7 +53,7 @@ namespace Liella.Compiler.LLVM.Emit {
             var evalStack = m_EvalStack;
 
             var value = evalStack.Pop();
-            evalStack.Push(value.TryCast(LLVMCompType.Int64, m_Builder));
+            evalStack.Push(value.TryCast(LLVMCompType.Integer64, m_Builder));
 
         }
         [ILCodeHandler(ILOpCode.Conv_i4)]
@@ -62,7 +62,7 @@ namespace Liella.Compiler.LLVM.Emit {
             var evalStack = m_EvalStack;
 
             var value = evalStack.Pop();
-            evalStack.Push(value.TryCast(LLVMCompType.Int32, m_Builder));
+            evalStack.Push(value.TryCast(LLVMCompType.Integer32, m_Builder));
 
         }
         [ILCodeHandler(ILOpCode.Conv_i2)]
@@ -71,7 +71,7 @@ namespace Liella.Compiler.LLVM.Emit {
             var evalStack = m_EvalStack;
 
             var value = evalStack.Pop();
-            evalStack.Push(value.TryCast(LLVMCompType.Int16, m_Builder));
+            evalStack.Push(value.TryCast(LLVMCompType.Integer16, m_Builder));
 
         }
         [ILCodeHandler(ILOpCode.Conv_i1)]
@@ -80,7 +80,7 @@ namespace Liella.Compiler.LLVM.Emit {
             var evalStack = m_EvalStack;
 
             var value = evalStack.Pop();
-            evalStack.Push(value.TryCast(LLVMCompType.Int8, m_Builder));
+            evalStack.Push(value.TryCast(LLVMCompType.Integer8, m_Builder));
 
         }
         [ILCodeHandler(ILOpCode.Conv_u8)]
@@ -89,7 +89,7 @@ namespace Liella.Compiler.LLVM.Emit {
             var evalStack = m_EvalStack;
 
             var value = evalStack.Pop();
-            evalStack.Push(value.TryCast(LLVMCompType.UInt64, m_Builder));
+            evalStack.Push(value.TryCast(LLVMCompType.UInteger64, m_Builder));
 
         }
         [ILCodeHandler(ILOpCode.Conv_u4)]
@@ -98,7 +98,7 @@ namespace Liella.Compiler.LLVM.Emit {
             var evalStack = m_EvalStack;
 
             var value = evalStack.Pop();
-            evalStack.Push(value.TryCast(LLVMCompType.UInt32, m_Builder));
+            evalStack.Push(value.TryCast(LLVMCompType.UInteger32, m_Builder));
 
         }
         [ILCodeHandler(ILOpCode.Conv_u2)]
@@ -107,7 +107,7 @@ namespace Liella.Compiler.LLVM.Emit {
             var evalStack = m_EvalStack;
 
             var value = evalStack.Pop();
-            evalStack.Push(value.TryCast(LLVMCompType.UInt16, m_Builder));
+            evalStack.Push(value.TryCast(LLVMCompType.UInteger16, m_Builder));
 
         }
         [ILCodeHandler(ILOpCode.Conv_u1)]
@@ -116,7 +116,7 @@ namespace Liella.Compiler.LLVM.Emit {
             var evalStack = m_EvalStack;
 
             var value = evalStack.Pop();
-            evalStack.Push(value.TryCast(LLVMCompType.UInt8, m_Builder));
+            evalStack.Push(value.TryCast(LLVMCompType.UInteger8, m_Builder));
 
         }
     }

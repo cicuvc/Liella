@@ -65,7 +65,7 @@
         "projectName": "FrameworkLib",
         "projectPath": "E:\\cs\\pl\\Liella\\Liella\\FrameworkLib\\FrameworkLib.csproj",
         "packagesPath": "C:\\Users\\18150\\.nuget\\packages\\",
-        "outputPath": "E:\\cs\\pl\\Liella\\Liella\\FrameworkLib\\obj\\",
+        "outputPath": "E:\\cs\\pl\\Liella\\Liella\\obj\\FrameworkLib\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\18150\\AppData\\Roaming\\NuGet\\NuGet.Config",

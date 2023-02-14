@@ -22,16 +22,16 @@ namespace Liella.Compiler.LLVM {
             return result;
         }
         public static LLVMCompValue CreateConstI32(uint value) {
-            return CreateValue(LLVMHelpers.CreateConstU32(value), LLVMCompType.Int32);
+            return CreateValue(LLVMHelpers.CreateConstU32(value), LLVMCompType.Integer32);
         }
         public static LLVMCompValue CreateConstI32(int value) {
-            return CreateValue(LLVMHelpers.CreateConstU32(value), LLVMCompType.Int32);
+            return CreateValue(LLVMHelpers.CreateConstU32(value), LLVMCompType.Integer32);
         }
         public static LLVMCompValue CreateConstI64(ulong value) {
-            return CreateValue(LLVMHelpers.CreateConstU64(value), LLVMCompType.Int64);
+            return CreateValue(LLVMHelpers.CreateConstU64(value), LLVMCompType.Integer64);
         }
         public static LLVMCompValue CreateConstI64(long value) {
-            return CreateValue(LLVMHelpers.CreateConstU64(value), LLVMCompType.Int64);
+            return CreateValue(LLVMHelpers.CreateConstU64(value), LLVMCompType.Integer64);
         }
         public unsafe LLVMCompValue TryCastComparable(LLVMBuilderRef builder) {
             switch (Type.LLVMType.Kind) {
@@ -41,7 +41,7 @@ namespace Liella.Compiler.LLVM {
                     return this;
                 }
                 case LLVMTypeKind.LLVMPointerTypeKind: {
-                    var ptrType = LLVMCompType.Int8.ToPointerType();
+                    var ptrType = LLVMCompType.Integer8.ToPointerType();
                     return CreateValue(builder.BuildBitCast(Value, ptrType.LLVMType), ptrType);
                 }
                 case LLVMTypeKind.LLVMStructTypeKind: {
@@ -74,17 +74,17 @@ namespace Liella.Compiler.LLVM {
             switch (dstType.LLVMType.Kind) {
                 case LLVMTypeKind.LLVMIntegerTypeKind: {
                     if (value.TypeOf.Kind.HasFlag(LLVMTypeKind.LLVMPointerTypeKind)) {
-                        value = builder.BuildPtrToInt(value, LLVMCompType.Int64.LLVMType);
+                        value = builder.BuildPtrToInt(value, LLVMCompType.Integer64.LLVMType);
                         tag = LLVMTypeTag.SignedInt;
                     }
                     if (value.TypeOf.Kind.HasFlag(LLVMTypeKind.LLVMFloatTypeKind)) {
-                        value = dstType.TypeTag.HasFlag(LLVMTypeTag.Signed) ? builder.BuildFPToSI(value, dstType.LLVMType) : builder.BuildFPToUI(value, dstType.LLVMType);
+                        value = dstType.TypeTag.HasFlag(LLVMTypeTag.NumberSigned) ? builder.BuildFPToSI(value, dstType.LLVMType) : builder.BuildFPToUI(value, dstType.LLVMType);
                         tag = dstType.TypeTag;
                     }
                     if (value.TypeOf.Kind.HasFlag(LLVMTypeKind.LLVMIntegerTypeKind)) {
                         if (value.TypeOf.IntWidth == dstType.LLVMType.IntWidth) return CreateValue(value, dstType);
                         if (value.TypeOf.IntWidth < dstType.LLVMType.IntWidth) {
-                            return CreateValue(tag.HasFlag(LLVMTypeTag.Signed) ? builder.BuildSExt(value, dstType.LLVMType) : builder.BuildZExt(value, dstType.LLVMType), dstType);
+                            return CreateValue(tag.HasFlag(LLVMTypeTag.NumberSigned) ? builder.BuildSExt(value, dstType.LLVMType) : builder.BuildZExt(value, dstType.LLVMType), dstType);
                         } else {
                             return CreateValue(builder.BuildTrunc(value, dstType.LLVMType), dstType);
                         }
@@ -100,7 +100,7 @@ namespace Liella.Compiler.LLVM {
                         return CreateValue(builder.BuildFPExt(value, LLVMTypeRef.Double), dstType);
                     }
                     if (value.TypeOf.Kind.HasFlag(LLVMTypeKind.LLVMIntegerTypeKind)) {
-                        if (tag.HasFlag(LLVMTypeTag.Signed))
+                        if (tag.HasFlag(LLVMTypeTag.NumberSigned))
                             return CreateValue(builder.BuildSIToFP(value, LLVMTypeRef.Double), dstType);
                         return CreateValue(builder.BuildUIToFP(value, LLVMTypeRef.Double), dstType);
                     }

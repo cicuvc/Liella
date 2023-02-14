@@ -17,7 +17,6 @@ namespace Liella.Compiler.LLVM.Emit {
         }
         [ILCodeHandler(ILOpCode.Pop)]
         public void Pop(ILOpCode opcode, ulong operand) {
-            var context = m_Context;
             var evalStack = m_EvalStack;
 
             evalStack.Pop();
@@ -50,10 +49,9 @@ namespace Liella.Compiler.LLVM.Emit {
                             LLVMHelpers.CreateConstU32(1)
                         });
 
-            var vaStartFunc = LLVMHelpers.GetIntrinsicFunction(context.Context.Module, "llvm.va_start", new LLVMTypeRef[] {
-                        });
+            var vaStartFunc = LLVMHelpers.GetIntrinsicFunction(context.Context.Module, "llvm.va_start", Array.Empty<LLVMTypeRef>());
             m_Builder.BuildCall(vaStartFunc, new LLVMValueRef[] {
-                            m_Builder.BuildBitCast(valistPtr,LLVMCompType.Int8.ToPointerType().LLVMType)
+                            m_Builder.BuildBitCast(valistPtr,LLVMCompType.Integer8.ToPointerType().LLVMType)
                         });
             var valistValue = m_Builder.BuildLoad(valistStorage); ;
             evalStack.Push(LLVMCompValue.CreateValue(valistValue, valistLLVMType.InstanceType));

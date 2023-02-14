@@ -18,7 +18,7 @@ namespace Liella.Project {
 
     }
     public class PrimaryVisitor : CSharpSyntaxVisitor<PrimaryModule> {
-        public SemanticModel m_Model;
+        private SemanticModel m_Model;
         public override PrimaryModule DefaultVisit(SyntaxNode node) {
             throw new NotImplementedException();
         }

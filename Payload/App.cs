@@ -114,7 +114,7 @@ namespace Payload
 
         }
         public static long SumVa(int cnt, __arglist) {
-            var result = 0l;
+            var result = 0L;
             var valist = __arglist;
             ref var list = ref valist.m_Valist;
             while ((cnt--) != 0) {

@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace Liella.Image {
     public class ImageTypeEntryFactory {
-        protected Hashtable m_Cache = new Hashtable();
-        protected ImageGenericInstanceTypeEntryKey m_GenericInstnaceKey = new ImageGenericInstanceTypeEntryKey();
-        protected ImageRealTypeEntryKey m_RealTypeKey = new ImageRealTypeEntryKey();
-        protected ImageGenericParamTypeEntry m_GPKey = new ImageGenericParamTypeEntry();
-        protected ImageMethodEntryKey m_MethodEntryKey = new ImageMethodEntryKey();
-        protected PointerTypeEntry m_PointerEntryKey = new PointerTypeEntry(null);
+        private readonly Hashtable m_Cache = new();
+        private readonly ImageGenericInstanceTypeEntryKey m_GenericInstnaceKey = new();
+        private readonly ImageRealTypeEntryKey m_RealTypeKey = new();
+        private readonly ImageGenericParamTypeEntry m_GPKey = new();
+        private readonly ImageMethodEntryKey m_MethodEntryKey = new();
+        private readonly PointerTypeEntry m_PointerEntryKey = new(null);
         public TypeEntry CreateTypeEntry(TypeDefinition def, ImmutableArray<TypeEntry> genericParams) {
             var key = m_GenericInstnaceKey.WithTypeDef(def).WithGeneric(genericParams);
             if (m_Cache.ContainsKey(key)) return (TypeEntry)m_Cache[key];

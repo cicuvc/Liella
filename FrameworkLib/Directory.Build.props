@@ -1,0 +1,6 @@
+<Project>
+ <PropertyGroup>
+   <BaseIntermediateOutputPath>../obj/FrameworkLib</BaseIntermediateOutputPath>
+   <Deterministic>true</Deterministic>
+ </PropertyGroup>
+</Project>

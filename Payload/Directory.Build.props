@@ -1,0 +1,6 @@
+<Project>
+ <PropertyGroup>
+	 <BaseIntermediateOutputPath>../obj/Payload</BaseIntermediateOutputPath>
+   <Deterministic>true</Deterministic>
+ </PropertyGroup>
+</Project>

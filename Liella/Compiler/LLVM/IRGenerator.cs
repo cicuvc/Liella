@@ -13,9 +13,10 @@ using LLVMInterop = LLVMSharp.Interop.LLVM;
 
 namespace Liella.Compiler.LLVM {
     public class IRGenerator {
-        protected LLVMBuilderRef m_Builder;
+        private LLVMBuilderRef m_Builder;
+        private LLVMILEmit m_IREmitter;
         public LLVMBuilderRef Builder => m_Builder;
-        protected LLVMILEmit m_IREmitter;
+        
         public IRGenerator(LLVMBuilderRef builder) {
             m_Builder = builder;
             m_IREmitter = new LLVMILEmit(builder);

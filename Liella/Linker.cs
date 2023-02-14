@@ -53,7 +53,7 @@ namespace Liella {
     }
     public enum ELFSymbolType {
         NoType = 0x0,
-        Object = 0x1,
+        SymbolObject = 0x1,
         Function = 0x2,
         Section = 0x3,
         File = 0x4,

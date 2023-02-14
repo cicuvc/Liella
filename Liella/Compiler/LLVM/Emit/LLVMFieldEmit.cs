@@ -40,7 +40,7 @@ namespace Liella.Compiler.LLVM.Emit {
             var evalStack = m_EvalStack;
             var instancePtr = (evalStack.Pop());
             var fieldPtr = IRHelper.GetInstanceFieldAddress(instancePtr, (uint)operand, context, m_Builder, out var fieldType);
-            evalStack.Push(LLVMCompValue.CreateValue(fieldPtr, LLVMTypeTag.Pointer));
+            evalStack.Push(LLVMCompValue.CreateValue(fieldPtr, LLVMTypeTag.TypePointer));
         }
         [ILCodeHandler(ILOpCode.Ldfld)]
         public void LoadField(ILOpCode opcode, ulong operand) {

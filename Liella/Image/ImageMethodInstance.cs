@@ -160,7 +160,7 @@ namespace Liella.Image {
         }
 
         public override TypeEntry GetMethodGenericByIndex(CompilationUnitSet env, uint index) {
-            if (m_Entry.GenericType.Length <= index) throw new Exception();
+            if (m_Entry.GenericType.Length <= index) throw new ArgumentOutOfRangeException(nameof(index));
             return m_Entry.GenericType[(int)(index)];
         }
 
@@ -259,7 +259,7 @@ namespace Liella.Image {
                 var stackDelta = 0;
                 //if (i.Key.Left == 42 && i.Key.Right == 48) Debugger.Break();
                 ForEachIL(i.Key, (opcode, operand) => {
-                    var delta = ILCodeExtension.s_StackDeltaTable[opcode];
+                    var delta = ILCodeExtension.StackDeltaTable[opcode];
                     if (delta != int.MaxValue) {
                         stackDelta += delta;
                     } else {
@@ -270,7 +270,7 @@ namespace Liella.Image {
                                 var targetSignature = sigObj.DecodeMethodSignature(TypeEnv.SignatureDecoder, this);
                                 stackDelta -= targetSignature.ParameterTypes.Length;
                                 stackDelta--; // ftn
-                                if (!targetSignature.ReturnType.ToString().Equals("System::Void")) {
+                                if (targetSignature.ReturnType.ToString()!=("System::Void")) {
                                     stackDelta++;
                                 }
                                 break;
@@ -286,13 +286,13 @@ namespace Liella.Image {
                                 var method = m_TypeEnv.ResolveMethodByHandle(MetadataHelper.CreateHandle((uint)operand), Reader, this, out var declType, out var signature);
                                 stackDelta -= signature.ParameterTypes.Length;
                                 if (!method.MethodDef.Attributes.HasFlag(MethodAttributes.Static)) stackDelta--;
-                                if (!signature.ReturnType.ToString().Equals("System::Void")) {
+                                if (signature.ReturnType.ToString()!=("System::Void")) {
                                     stackDelta++;
                                 }
                                 break;
                             }
                             case ILOpCode.Ret: {
-                                if (!m_Signature.ReturnType.ToString().Equals("System::Void")) {
+                                if (m_Signature.ReturnType.ToString()!=("System::Void")) {
                                     stackDelta--;
                                 }
                                 break;

@@ -7,14 +7,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Liella.Compiler.LLVM {
-    public class LLVMInterfaceTerm {
-        protected LLVMCompiler m_Compiler;
-        protected uint m_InterfaceIndex = 0;
-        protected string m_MethodName;
-        protected TypeEntry m_ReturnType;
-        protected ImmutableArray<TypeEntry> m_ParamTypes = ImmutableArray<TypeEntry>.Empty;
-        protected int m_HashCode = 0;
-        protected MethodEntry m_MethodEntry;
+    public sealed class LLVMInterfaceTerm {
+        private LLVMCompiler m_Compiler;
+        private uint m_InterfaceIndex;
+        private string m_MethodName;
+        private TypeEntry m_ReturnType;
+        private ImmutableArray<TypeEntry> m_ParamTypes = ImmutableArray<TypeEntry>.Empty;
+        private int m_HashCode;
+        private MethodEntry m_MethodEntry;
 
         public uint InterfaceIndex => m_InterfaceIndex;
         public MethodEntry TemplateEntry => m_MethodEntry;

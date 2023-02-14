@@ -51,14 +51,14 @@ namespace Liella.Compiler.LLVM {
         public static LLVMValueRef CreateConstU64(long value) => LLVMValueRef.CreateConstInt(LLVMTypeRef.Int64, (ulong)value);
 
         public static unsafe ulong EvaluateConstIntValue(LLVMValueRef value, LLVMCompiler compiler) {
-            var tempFunction = compiler.Module.AddFunction($"eval_func_{System.Environment.TickCount}", LLVMTypeRef.CreateFunction(value.TypeOf, new LLVMTypeRef[] { }));
+            var tempFunction = compiler.Module.AddFunction($"eval_func_{System.Environment.TickCount}", LLVMTypeRef.CreateFunction(value.TypeOf, Array.Empty<LLVMTypeRef>()));
             var defaultBlock = tempFunction.AppendBasicBlock("block0");
             var builder = compiler.EvalBuilder;
             builder.PositionAtEnd(defaultBlock);
             builder.BuildRet(value);
 
             compiler.Evaluator.RecompileAndRelinkFunction(tempFunction);
-            var result = compiler.Evaluator.RunFunction(tempFunction, new LLVMGenericValueRef[] { });
+            var result = compiler.Evaluator.RunFunction(tempFunction, Array.Empty<LLVMGenericValueRef>());
             var valueResult = LLVMInterop.GenericValueToInt(result, 0);
 
             defaultBlock.Delete();

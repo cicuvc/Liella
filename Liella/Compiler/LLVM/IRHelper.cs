@@ -11,10 +11,6 @@ using LLVMInterop = LLVMSharp.Interop.LLVM;
 
 namespace Liella.Compiler.LLVM {
     public static class IRHelper {
-        public static LLVMValueRef m_ObjectDataStorageMask = LLVMHelpers.CreateConstU64(0xFFFFFFFFFF);
-        public unsafe static LLVMValueRef GetUndef(LLVMTypeRef type) {
-            return (LLVMValueRef)LLVMInterop.GetUndef(type);
-        }
         public static LLVMValueRef AllocObjectDefault(LLVMCompiler compiler, LLVMClassTypeInfo declType, LLVMBuilderRef builder) {
             var runtimeHelpers = compiler.ResolveLLVMType(compiler.TypeEnvironment.IntrinicsTypes["System.Runtime.CompilerServices::RuntimeHelpers"]);
             var gcHeapAlloc = compiler.ResolveLLVMMethod(runtimeHelpers.MetadataType.FindMethodByName("GCHeapAlloc").Entry);

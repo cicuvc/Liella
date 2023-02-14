@@ -55,7 +55,7 @@ namespace Liella.Compiler.LLVM.Emit {
 
             var value = *(double*)(&operand);
             var doubleValue = LLVMValueRef.CreateConstReal(LLVMTypeRef.Double, value);
-            evalStack.Push(LLVMCompValue.CreateValue(doubleValue, LLVMTypeTag.Real | LLVMTypeTag.FP64));
+            evalStack.Push(LLVMCompValue.CreateValue(doubleValue, LLVMTypeTag.NumberReal | LLVMTypeTag.FP64));
         }
         [ILCodeHandler(ILOpCode.Ldc_r4)]
         public unsafe void LoadConstantFloat32Value(ILOpCode opcode, ulong operand) {
@@ -64,7 +64,7 @@ namespace Liella.Compiler.LLVM.Emit {
 
             var value = *(float*)(&operand);
             var doubleValue = LLVMValueRef.CreateConstReal(LLVMTypeRef.Float, value);
-            evalStack.Push(LLVMCompValue.CreateValue(doubleValue, LLVMTypeTag.Real));
+            evalStack.Push(LLVMCompValue.CreateValue(doubleValue, LLVMTypeTag.NumberReal));
         }
     }
 }
